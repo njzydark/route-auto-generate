@@ -1,0 +1,25 @@
+{
+  "name": "route-auto-generate",
+  "version": "1.0.0",
+  "description": "A webpack plugin to auto generate route for vue or react",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://git.etouch.cn/gitbucket/git/qijingyuan/route-auto-generate.git"
+  },
+  "keywords": [
+    "route",
+    "webpackPlugin"
+  ],
+  "dependencies": {
+    "app-root-path": "^2.2.1",
+    "chokidar": "^3.2.3",
+    "fast-glob": "^3.1.0",
+    "prettier": "^1.18.2"
+  },
+  "author": "qijingyuan",
+  "license": "MIT"
+}
