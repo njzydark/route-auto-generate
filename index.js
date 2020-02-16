@@ -8,7 +8,6 @@ class RouteAutoGenerateWebpackPlugin {
   }
   apply(compiler) {
     compiler.hooks.afterPlugins.tap(pluginName, () => {
-      console.log(this.options);
       generateRoute(this.options);
     });
   }
