@@ -46,16 +46,17 @@ module.exports = {
 
 初始化插件时可以进行以下配置：
 
-| 名称         | 类型    | 默认值                     | 描述                                                         |
-| ------------ | :------ | -------------------------- | ------------------------------------------------------------ |
-| framework    | string  | vue                        | 所使用的框架                                                 |
-| routerPath   | string  | appRoot + "/src/router.js" | 路由文件路径 必须是绝对路径                                  |
-| pagesPath    | string  | appRoot + "/src/views"     | 页面文件夹路径 必须是绝对路径                                |
-| pagesAlias   | string  | null                       | 项目路径别名 比如@/views/代表src/views/ 如果不实用别名，路由的path将使用绝对路径 |
-| routerPrefix | string  | /                          | 路由公共前缀                                                 |
-| template     | object  | vueTemplate\|reactTemplate | 路由生成模板                                                 |
-| watch        | boolean | true                       | 是否监听文件目录变化                                         |
-| coverRoutes  | Array   | []                         | 需要覆盖的路由                                               |
+| 名称            | 类型    | 默认值                     | 描述                                                         |
+| --------------- | :------ | -------------------------- | ------------------------------------------------------------ |
+| framework       | string  | vue                        | 所使用的框架                                                 |
+| routerPath      | string  | appRoot + "/src/router.js" | 路由文件路径 必须是绝对路径                                  |
+| pagesPath       | string  | appRoot + "/src/views"     | 页面文件夹路径 必须是绝对路径                                |
+| pagesAlias      | string  | null                       | 项目路径别名 比如@/views/代表src/views/ 如果不实用别名，路由的path将使用绝对路径 |
+| routerPrefix    | string  | /                          | 路由公共前缀                                                 |
+| template        | object  | vueTemplate\|reactTemplate | 路由生成模板                                                 |
+| watch           | boolean | true                       | 是否监听文件目录变化                                         |
+| coverRoutes     | Array   | [{name,path,component}]    | 需要覆盖的路由                                               |
+| chunkNamePrefix | String  | pages                      | webpack chunk name 前缀，null则不生成chunkname               |
 
 ## 目录文件夹命名格式
 
@@ -155,10 +156,29 @@ module.exports = tpl;
 
 你可以根据自己的实际需求编写自己的template文件，然后初始化插件时配置template即可
 
+## 路由覆盖
+
+某些情况下自动生成的路由顺序你可能不满意，需要调整，那么你可以使用`coverRoutes`这个配置项来定义你需要覆盖的路由，也就是把他们放到最前面，其中`name`,`path`,`component`都是必填项，用来定义路由名称，路由路径和路由文件所在位置
+
+```js
+new RouteAutoGenerateWebpackPlugin({
+  routerPath: path.resolve(__dirname, "./src/router.js"),
+  pagesPath: path.resolve(__dirname, "./src/views"),
+  pagesAlias: "@/views/",
+  coverRoutes: [
+    {
+      name: 'index',
+      path: '/',
+      component: '@/views/about/index.vue'
+    }
+  ],
+})
+```
+
 ## 注意事项
 
-1. 在react项目中使用时@loadable/component和react-router-dom需要自行安装
-2. 在vue项目中vue-router需要自行安装
+1. 在react项目中使用时`@loadable/component`和`react-router-dom`需要自行安装
+2. 在vue项目中`vue-router`需要自行安装
 3. watch默认打开，如果需要打包部署生产时请手动关闭，不然不会自动退出
 
 ## TODO
