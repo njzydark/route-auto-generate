@@ -56,7 +56,7 @@ module.exports = {
 | template        | object  | vueTemplate\|reactTemplate | 路由生成模板                                                 |
 | watch           | boolean | true                       | 是否监听文件目录变化                                         |
 | coverRoutes     | Array   | [{name,path,component}]    | 需要覆盖的路由                                               |
-| notFoundRoute   | String  | ''                         | 当路由无法匹配的时候，path: '*'所对应的组件                    |
+| redirectPath    | String  | ""                         | 当路由无法匹配时进行重定向的路径，空字符串时关闭             |
 | chunkNamePrefix | String  | pages                      | webpack chunk name 前缀，null则不生成chunkname               |
 
 ## 目录文件夹命名格式
@@ -175,8 +175,6 @@ new RouteAutoGenerateWebpackPlugin({
   ],
 })
 ```
-## path: '*'
-notFoundRoute 参数指定了path: '*'对应的路由组件。通常情况下是用于路径不匹配任何路由的情况。
 
 ## 注意事项
 
