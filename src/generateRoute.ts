@@ -1,37 +1,29 @@
-const fs = require('fs');
-const appRoot = require('app-root-path');
-const fg = require('fast-glob');
-const chokidar = require('chokidar');
-const prettier = require('prettier');
+import fs from 'fs';
+import appRoot from 'app-root-path';
+import fg from 'fast-glob';
+import chokidar from 'chokidar';
+import prettier from 'prettier';
 
-const reactTemplate = require('./reactTemplate');
-const vueTemplate = require('./vueTemplate');
+import vueTemplate from './vueTemplate';
+import reactTemplate from './reactTemplate';
+import { Options } from '../types';
 
-const options = {
-  // 框架
+const options: Options = {
   framework: 'vue',
-  // 路由文件地址
+  template: vueTemplate,
   routerPath: appRoot + '/src/router.js',
-  // 页面文件地址
   pagesPath: appRoot + '/src/views',
-  // 项目目录别名 例如@代表src/
   pagesAlias: null,
-  // 路由公共前缀
   routePrefix: '/',
-  // 是否监听页面文件夹目录结构变化
   watch: true,
-  // 需要覆盖的路由 {name path component}
   coverRoutes: [],
-  // 路由无法匹配时重定向路径
   redirectPath: '',
-  // 自定义webpack chunkname
   chunkNamePrefix: 'pages'
 };
 
-function generateRoute(newOptions = {}) {
-  Object.assign(options, newOptions, {
-    template: options.framework === 'vue' ? vueTemplate : reactTemplate
-  });
+function generateRoute(newOptions: Partial<Options> = {}) {
+  Object.assign(options, newOptions);
+  options.template = options.framework === 'vue' ? vueTemplate : reactTemplate;
 
   const { framework, watch, pagesPath, routerPath } = options;
 
@@ -53,7 +45,7 @@ function generateRoute(newOptions = {}) {
       ? /(\/index\.vue$)|(^[a-zA-Z0-9-_:?$]*\.vue$)/
       : /(\/index\.(js|jsx|ts|tsx)$)|(^[a-zA-Z0-9-_:?$]*\.(js|jsx|ts|tsx)$)/;
 
-  watch &&
+  watcher &&
     watcher
       .on('add', file => {
         if (standardFileFLag.test(file)) {
@@ -73,7 +65,7 @@ function generateRoute(newOptions = {}) {
 }
 
 // 根据获取的页面文件地址输出路由代码
-function filesToRoutes(files) {
+function filesToRoutes(files: Set<string>) {
   const {
     routePrefix,
     pagesAlias,
@@ -84,8 +76,8 @@ function filesToRoutes(files) {
     redirectPath,
     framework
   } = options;
-  files = [...files].sort();
-  const routes = files.map(file => {
+  let filesArr = [...files].sort();
+  const routes = filesArr.map(file => {
     // 获取路由名称
     const name = file
       .split('.')[0]
@@ -146,13 +138,13 @@ function filesToRoutes(files) {
 }
 
 // 根据获取的路由代码完成路由文件并格式化代码
-function setRouterTemplate(routes) {
+function setRouterTemplate(routes: string) {
   const { template } = options;
   return prettier.format(template.fileTpl(routes), { parser: 'babel' });
 }
 
-function slash(filepath) {
+function slash(filepath: string) {
   filepath.replace(/\\/g, '/');
 }
 
-module.exports = generateRoute;
+export default generateRoute;

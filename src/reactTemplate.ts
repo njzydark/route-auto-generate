@@ -1,4 +1,7 @@
-function routeTpl({ name, path, component, chunkNamePrefix }) {
+import { RouteConfig } from "../types";
+
+function routeTpl(config: RouteConfig) {
+  const { name, path, component, chunkNamePrefix } = config;
   let tpl;
   if (name === 'redirectPath') {
     tpl = `<Redirect to="${path}" />`;
@@ -20,7 +23,7 @@ function routeTpl({ name, path, component, chunkNamePrefix }) {
   return tpl;
 }
 
-function fileTpl(routes) {
+function fileTpl(routes: string) {
   return `
     import React, { Component } from 'react';
     import { Switch, Route, Redirect } from 'react-router-dom';
@@ -37,7 +40,7 @@ function fileTpl(routes) {
     };`;
 }
 
-module.exports = {
+export default {
   routeTpl,
   fileTpl
 };
