@@ -10,13 +10,13 @@
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
-    "chokidar": "^3.3.1",
-    "fast-glob": "^3.1.1",
-    "prettier": "^1.19.1"
+    "chokidar": "^3.4.0",
+    "fast-glob": "^3.2.4",
+    "prettier": "^2.0.5"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/0njzy0/route-auto-generate.git"
+    "url": "https://github.com/njzydark/route-auto-generate.git"
   },
   "keywords": [
     "vue",
@@ -26,7 +26,7 @@
     "webpackPlugin"
   ],
   "bugs": {
-    "url": "https://github.com/0njzy0/route-auto-generate/issues"
+    "url": "https://github.com/njzydark/route-auto-generate/issues"
   },
-  "homepage": "https://github.com/0njzy0/route-auto-generate#readme"
+  "homepage": "https://github.com/njzydark/route-auto-generate#readme"
 }
