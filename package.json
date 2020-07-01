@@ -1,13 +1,14 @@
 {
   "name": "route-auto-generate",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "description": "A webpack plugin to auto generate route for vue or react",
   "author": "njzydark",
   "license": "MIT",
   "main": "dist/index.js",
   "scripts": {
+    "clean": "rimraf dist",
     "dev": "cross-env NODE_ENV=development babel -w src -d dist --verbose --extensions .ts --ignore */**/*.d.ts,**/**/*.test.ts --source-maps",
-    "build": "npm run build.compile && npm run build.types",
+    "build": "npm run clean && npm run build.compile && npm run build.types",
     "build.compile": "cross-env NODE_ENV=production babel src -d dist --verbose --extensions .ts --ignore */**/*.d.ts,**/**/*.test.ts",
     "build.types": "cross-env NODE_ENV=production tsc --project tsconfig.types.json"
   },
@@ -33,15 +34,16 @@
   },
   "homepage": "https://github.com/njzydark/route-auto-generate#readme",
   "devDependencies": {
-    "@babel/cli": "^7.10.3",
-    "@babel/core": "^7.10.3",
-    "@babel/preset-env": "^7.10.3",
-    "@babel/preset-typescript": "^7.10.1",
+    "@babel/cli": "^7.10.4",
+    "@babel/core": "^7.10.4",
+    "@babel/preset-env": "^7.10.4",
+    "@babel/preset-typescript": "^7.10.4",
     "@types/app-root-path": "^1.2.4",
-    "@types/node": "^14.0.13",
+    "@types/node": "^14.0.14",
     "@types/prettier": "^2.0.1",
-    "@types/webpack": "^4.41.17",
+    "@types/webpack": "^4.41.18",
     "cross-env": "^7.0.2",
+    "rimraf": "^3.0.2",
     "typescript": "^3.9.5"
   }
 }
