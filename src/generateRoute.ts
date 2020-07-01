@@ -17,13 +17,16 @@ const options: Options = {
   routePrefix: '/',
   watch: true,
   coverRoutes: [],
-  redirectPath: '',
+  redirectPath: null,
   chunkNamePrefix: 'pages'
 };
 
 function generateRoute(newOptions: Partial<Options> = {}) {
   Object.assign(options, newOptions);
-  options.template = options.framework === 'vue' ? vueTemplate : reactTemplate;
+
+  if (newOptions.template === undefined) {
+    options.template = options.framework === 'vue' ? vueTemplate : reactTemplate;
+  }
 
   const { framework, watch, pagesPath, routerPath } = options;
 

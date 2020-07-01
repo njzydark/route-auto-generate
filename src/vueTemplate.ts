@@ -1,4 +1,4 @@
-import { RouteConfig } from "../types";
+import { RouteConfig } from '../types';
 
 function routeTpl(config: RouteConfig) {
   const { name, path, component, chunkNamePrefix } = config;

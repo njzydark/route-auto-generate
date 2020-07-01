@@ -33,15 +33,7 @@ export interface Options {
     component: string;
   }[];
   /** 路由无法匹配时重定向路径 */
-  redirectPath: string;
+  redirectPath: null | string;
   /** 自定义webpack chunkname */
   chunkNamePrefix: null | string;
 }
-
-declare class RouteAutoGenerateWebpackPlugin {
-  private options;
-  constructor(options: Partial<Options>);
-  apply(compiler: Compiler): void;
-}
-
-export { RouteAutoGenerateWebpackPlugin };
