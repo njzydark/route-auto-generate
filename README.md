@@ -2,14 +2,19 @@
 
 WebpackPlugin
 
-## 特色
+[![NPM Version](https://img.shields.io/npm/v/npm.svg?style=flat)]()
+[![NPM License](https://img.shields.io/npm/l/all-contributors.svg?style=flat)](https://github.com/njzydark/route-auto-generate/blob/master/LICENSE)
+[![NPM Downloads](https://img.shields.io/npm/dt/route-auto-generate.svg?style=flat)]()  
+[![NPM](https://nodei.co/npm/route-auto-generate.png?downloads=true)](https://www.npmjs.com/package/route-auto-generate)  
+
+## 特性
 
 - 根据页面目录结构自动生成路由文件
 - 支持基础路由和动态路由
 - 支持 vue-router 和 react-router
 - 可配置路由前缀
-- 可以进行路由覆盖
-- 可以配置重定向路由
+- 可配置重定向路由
+- 可进行路由覆盖
 - 可自定义 WebpackChunkName
 - 路由生成模板支持自定义
 - 自动监听目录结构变化并更新路由文件
