@@ -1,6 +1,6 @@
 {
   "name": "route-auto-generate",
-  "version": "1.0.9",
+  "version": "2.0.0",
   "description": "A webpack plugin to auto generate route for vue or react",
   "author": "njzydark",
   "license": "MIT",
