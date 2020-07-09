@@ -15,6 +15,7 @@ WebpackPlugin
 - 可配置路由前缀
 - 可配置重定向路由
 - 可进行路由覆盖
+- 可配置是否开启路由懒加载
 - 可自定义 WebpackChunkName
 - 路由生成模板支持自定义
 - 自动监听目录结构变化并更新路由文件
@@ -24,7 +25,7 @@ WebpackPlugin
 这里以 vue-cli 生成的项目为例
 
 ```bash
-npm install --save-dev route-auto-generate
+npm i -D route-auto-generate
 ```
 
 在 webpack 配置文件中引入，如果是 vue-cli 生成的项目请在 vue.config.js 引入
@@ -42,6 +43,7 @@ module.exports = {
     },
     plugins: [
       new RouteAutoGenerateWebpackPlugin({
+        routerLibraryName: "vue-router",
         routerPath: path.resolve(__dirname, "./src/router.js"),
         pagesPath: path.resolve(__dirname, "./src/views"),
         pagesAlias: "@/views/",
@@ -56,17 +58,18 @@ module.exports = {
 初始化插件时可以进行以下配置：
 
 | 名称            | 类型             | 默认值                     | 描述                                                         |
-| --------------- | :--------------- | -------------------------- | ------------------------------------------------------------ |
-| framework       | vue \| react | vue                        | 所使用的框架                                                 |
+| --------------- | :--------------- | :------------------------- | ------------------------------------------------------------ |
+| routerLibraryName | vue-router \|   react-router | vue-router                 | 路由库名称                                            |
 | routerPath      | string           | appRoot + "/src/router.js" | 路由文件路径 必须是绝对路径                                  |
 | pagesPath       | string           | appRoot + "/src/views"     | 页面文件夹路径 必须是绝对路径                                |
-| pagesAlias      | null \| string   | null                       | 项目路径别名 比如@/views/代表src/views/ 如果不实用别名，路由的path将使用绝对路径 |
+| pagesAlias      | string   | ''                    | 项目路径别名 比如@/views/代表src/views/ 如果不实用别名，路由的path将使用绝对路径 |
 | routerPrefix    | string           | /                          | 路由公共前缀                                                 |
 | template        | object           | vueTemplate \| reactTemplate | 路由生成模板  |
-| watch           | boolean          | true                       | 是否监听文件目录变化                                         |
-| coverRoutes     | Array            | [{name,path,component}]    | 需要覆盖的路由                                               |
-| redirectPath    | null \| string           | null                 | 当路由无法匹配时进行重定向的路径         |
-| chunkNamePrefix | string           | pages                      | webpack chunk name 前缀，null则不生成chunkname               |
+| watch           | boolean          | true                       | 是否监听文件目录变化 打包时请关闭                                  |
+| asyncRoute | boolean | true | 是否开启路由懒加载 |
+| coverRoutes     | Array            | RouteConfig[]    | 需要覆盖的路由                                               |
+| redirectPath    | string           | ''               | 当路由无法匹配时进行重定向的路径         |
+| chunkNamePrefix | string           | pages                      | webpack chunk name 前缀               |
 
 ## 命名格式
 
@@ -116,42 +119,47 @@ routes: [
 ### reactTemplate
 
 ```ts
-import { RouteConfig } from "../types";
+import { RouteConfig } from '../types';
 
 function routeTpl(config: RouteConfig) {
-  const { name, path, component, chunkNamePrefix } = config;
+  const { name, path, component, chunkNamePrefix, asyncRoute } = config;
   let tpl;
-  if (name === 'redirectPath') {
-    tpl = `{
-      path:"*",
-      redirect:"${path}"
-    }`;
-  } else if (chunkNamePrefix === null) {
-    tpl = `{
-      path: "${path}",
-      name: "${name}",
-      component:() => import("${component}")
-    }`;
+  if (name === undefined) {
+    // prettier-ignore
+    tpl = `<Redirect to="${path}" />`;
+  } else if (asyncRoute) {
+    // prettier-ignore
+    tpl = `
+    <Route
+      exact
+      path="${path}"
+      component={Loadable(() => import(${chunkNamePrefix &&`/* webpackChunkName: "${chunkNamePrefix}-${name}" */`} "${component}"))}
+    />`;
   } else {
-    tpl = `{
-      path: "${path}",
-      name: "${name}",
-      component:() => import(/* webpackChunkName: "${chunkNamePrefix}-${name}" */ "${component}")
-    }`;
+    // prettier-ignore
+    tpl = `
+    <Route exact path="${path}" component={${name}} />`;
   }
   return tpl;
 }
 
-function fileTpl(routes: string) {
+function fileTpl(routesCode: string, syncRoutesImportCode?: string) {
+  // prettier-ignore
   return `
-    import Vue from "vue";
-    import Router from "vue-router";
+    import React, { Component } from 'react';
+    import { Switch, Route, Redirect } from 'react-router-dom';
+    import Loadable from '@loadable/component'
+    ${syncRoutesImportCode}
 
-    Vue.use(Router);
-
-    export default new Router({
-      routes: [${routes}]
-    });`;
+    export default class RouteView extends Component {
+      render() {
+        return (
+          <Switch>
+            ${routesCode}
+          </Switch>
+        )
+      }
+    };`;
 }
 
 export default {
@@ -166,38 +174,43 @@ export default {
 import { RouteConfig } from '../types';
 
 function routeTpl(config: RouteConfig) {
-  const { name, path, component, chunkNamePrefix } = config;
+  const { name, path, component, chunkNamePrefix, asyncRoute } = config;
   let tpl;
-  if (name === 'redirectPath') {
+  if (name === undefined) {
+    // prettier-ignore
     tpl = `{
       path:"*",
       redirect:"${path}"
     }`;
-  } else if (chunkNamePrefix === null) {
+  } else if (asyncRoute) {
+    // prettier-ignore
     tpl = `{
       path: "${path}",
       name: "${name}",
-      component:() => import("${component}")
+      component: () => import(${chunkNamePrefix &&`/* webpackChunkName: "${chunkNamePrefix}-${name}" */`} "${component}")
     }`;
   } else {
+    // prettier-ignore
     tpl = `{
       path: "${path}",
       name: "${name}",
-      component:() => import(/* webpackChunkName: "${chunkNamePrefix}-${name}" */ "${component}")
+      component: ${name}
     }`;
   }
   return tpl;
 }
 
-function fileTpl(routes: string) {
+function fileTpl(routesCode: string, syncRoutesImportCode?: string) {
+  // prettier-ignore
   return `
     import Vue from "vue";
     import Router from "vue-router";
+    ${syncRoutesImportCode}
 
     Vue.use(Router);
 
     export default new Router({
-      routes: [${routes}]
+      routes: [${routesCode}]
     });`;
 }
 
