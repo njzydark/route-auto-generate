@@ -1,38 +1,43 @@
-import { RouteConfig } from '../types';
+import { RouteConfig } from "../types";
 
 function routeTpl(config: RouteConfig) {
-  const { name, path, component, chunkNamePrefix } = config;
+  const { name, path, component, chunkNamePrefix, asyncRoute } = config;
   let tpl;
-  if (name === 'redirectPath') {
+  if (name === undefined) {
+    // prettier-ignore
     tpl = `{
       path:"*",
       redirect:"${path}"
     }`;
-  } else if (chunkNamePrefix === null) {
+  } else if (asyncRoute) {
+    // prettier-ignore
     tpl = `{
       path: "${path}",
       name: "${name}",
-      component:() => import("${component}")
+      component: () => import(${chunkNamePrefix &&`/* webpackChunkName: "${chunkNamePrefix}-${name}" */`} "${component}")
     }`;
   } else {
+    // prettier-ignore
     tpl = `{
       path: "${path}",
       name: "${name}",
-      component:() => import(/* webpackChunkName: "${chunkNamePrefix}-${name}" */ "${component}")
+      component: ${name}
     }`;
   }
   return tpl;
 }
 
-function fileTpl(routes: string) {
+function fileTpl(routesCode: string, syncRoutesImportCode?: string) {
+  // prettier-ignore
   return `
     import Vue from "vue";
     import Router from "vue-router";
+    ${syncRoutesImportCode}
 
     Vue.use(Router);
 
     export default new Router({
-      routes: [${routes}]
+      routes: [${routesCode}]
     });`;
 }
 
