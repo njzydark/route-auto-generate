@@ -122,7 +122,7 @@ function getRoutesCode(routes: RouteConfig[]) {
 function getRouterFileCode(routesCode: string, routes: RouteConfig[] = []) {
   const { template } = options;
   let syncRoutesImportCode = '';
-  const syncRoutes = routes.filter(route => !route.asyncRoute);
+  const syncRoutes = routes.filter(route => route.name && !route.asyncRoute);
   syncRoutesImportCode = syncRoutes
     .map(item => {
       return `import ${item.name} from "${item.component}"`;
